@@ -30,6 +30,6 @@ export class CreateEmployeeDto {
   employee_id_number: string;
 
   @IsString()
-  @IsEnum(['elastic', 'not elastic'])
+  @IsEnum(['elastic', 'static'])
   type_working_hours: string;
 }

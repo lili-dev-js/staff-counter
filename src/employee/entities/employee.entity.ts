@@ -28,7 +28,7 @@ export class Employee {
   @Column({ type: 'varchar', length: 15 })
   surname: string;
 
-  @Column({ type: 'enum', enum: ['elastic', 'not elastic'] })
+  @Column({ type: 'enum', enum: ['elastic', 'static'] })
   type_working_hours: string;
 
   @OneToMany(() => WorkShift, (workShift) => workShift.employee)
