@@ -19,6 +19,16 @@ export class CreateEmployeeDto {
   })
   surname: string;
 
+  @IsNotEmpty()
+  @MinLength(3, {
+    message: 'Employee_id_number must have at least 3 characters.',
+  })
+  @IsAlphanumeric(undefined, {
+    message:
+      'Employee_id_number does not allow other than alpha numeric chars.',
+  })
+  employee_id_number: string;
+
   @IsString()
   @IsEnum(['elastic', 'not elastic'])
   type_working_hours: string;

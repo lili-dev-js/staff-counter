@@ -5,6 +5,9 @@ import { GraphicCheckModule } from './graphic-check/graphic-check.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee/employee.module';
 import { Employee } from './employee/entities/employee.entity';
+import { WorkScheduleModule } from './work-schedule/work-schedule.module';
+import { WorkShiftModule } from './work-shift/work-shift.module';
+import { IsUniqueVariableInObjectsArray } from './validators/isUniqueVariableInObjectsArray';
 
 @Module({
   imports: [
@@ -21,8 +24,10 @@ import { Employee } from './employee/entities/employee.entity';
     }),
     GraphicCheckModule,
     EmployeeModule,
+    WorkScheduleModule,
+    WorkShiftModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, IsUniqueVariableInObjectsArray],
 })
 export class AppModule {}

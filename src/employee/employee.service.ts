@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
-    private readonly userRepository: Repository<Employee>,
+    private readonly employeeRepository: Repository<Employee>,
   ) {}
 
   create(createEmployeeDto: CreateEmployeeDto) {
@@ -17,7 +17,7 @@ export class EmployeeService {
     employee.name = createEmployeeDto.name;
     employee.surname = createEmployeeDto.surname;
     employee.type_working_hours = createEmployeeDto.type_working_hours;
-    return this.userRepository.save(employee);
+    return this.employeeRepository.save(employee);
   }
 
   findAll() {
