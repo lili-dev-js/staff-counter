@@ -24,5 +24,5 @@ export class WorkShiftNoEmployeeDto extends OmitType(CreateWorkShiftDto, [
   'employee',
 ] as const) {
   @IsNotEmpty()
-  employee_id: number;
+  employee_id_number: string;
 }
