@@ -1,5 +1,6 @@
 import { Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WorkShift } from '../../work-shift/entities/work-shift.entity';
+import { Error } from '../check/error/entities/error.entity';
 
 @Entity()
 export class WorkSchedule {
@@ -11,4 +12,10 @@ export class WorkSchedule {
   })
   @JoinColumn({ name: 'work_shift_ids' })
   workShifts: WorkShift[];
+
+  @OneToMany(() => Error, (error) => error.workSchedule, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'errors_ids' })
+  errors: Error[];
 }

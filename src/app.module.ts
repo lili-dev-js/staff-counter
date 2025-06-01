@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { GraphicCheckModule } from './graphic-check/graphic-check.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee/employee.module';
 import { Employee } from './employee/entities/employee.entity';
 import { WorkScheduleModule } from './work-schedule/work-schedule.module';
 import { WorkShiftModule } from './work-shift/work-shift.module';
 import { IsUniqueVariableInObjectsArray } from './validators/isUniqueVariableInObjectsArray';
+import { CheckModule } from './work-schedule/check/check.module';
 
 @Module({
   imports: [
@@ -22,7 +22,6 @@ import { IsUniqueVariableInObjectsArray } from './validators/isUniqueVariableInO
       autoLoadEntities: true,
       synchronize: true,
     }),
-    GraphicCheckModule,
     EmployeeModule,
     WorkScheduleModule,
     WorkShiftModule,

@@ -6,10 +6,16 @@ import { Employee } from '../../employee/entities/employee.entity';
 import { CheckController } from './check.controller';
 import { WorkScheduleService } from '../work-schedule.service';
 import { CheckService } from './check.service';
+import { ErrorModule } from './error/error.module';
+import { ErrorService } from './error/error.service';
+import { Error } from './error/entities/error.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkShift, WorkSchedule, Employee])],
+  imports: [
+    TypeOrmModule.forFeature([WorkShift, WorkSchedule, Employee, Error]),
+    ErrorModule,
+  ],
   controllers: [CheckController],
-  providers: [WorkScheduleService, CheckService],
+  providers: [WorkScheduleService, CheckService, ErrorService],
 })
 export class CheckModule {}

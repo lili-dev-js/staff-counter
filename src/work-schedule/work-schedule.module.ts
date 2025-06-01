@@ -6,10 +6,11 @@ import { WorkShift } from '../work-shift/entities/work-shift.entity';
 import { WorkSchedule } from './entities/work-schedule.entity';
 import { Employee } from '../employee/entities/employee.entity';
 import { CheckModule } from './check/check.module';
+import { Error } from './check/error/entities/error.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkShift, WorkSchedule, Employee]),
+    TypeOrmModule.forFeature([WorkShift, WorkSchedule, Employee, Error]),
     CheckModule
   ],
   controllers: [WorkScheduleController],

@@ -25,21 +25,21 @@ export class WorkScheduleController {
     return this.workScheduleService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workScheduleService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateWorkScheduleDto: UpdateWorkScheduleDto,
-  ) {
-    return this.workScheduleService.update(+id, updateWorkScheduleDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workScheduleService.remove(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.workScheduleService.findOne(+id);
+  // }
+  //
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateWorkScheduleDto: UpdateWorkScheduleDto,
+  // ) {
+  //   return this.workScheduleService.update(+id, updateWorkScheduleDto);
+  // }
+  //
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.workScheduleService.remove(+id);
+  // }
 }

@@ -26,7 +26,6 @@ export class WorkScheduleService {
     const createdEmployees = await this.employeeRepository.save(
       employees.map((employee) => ({
         ...employee,
-        check_schedule_id: checkScheduleId,
       })),
     );
 
@@ -52,7 +51,10 @@ export class WorkScheduleService {
         .filter((data) => typeof data !== 'undefined'),
     });
 
-    return this.workScheduleRepository.save(workSchedule);
+    return {
+      ...(await this.workScheduleRepository.save(workSchedule)),
+      employees: createdEmployees,
+    };
   }
 
   findAll() {
