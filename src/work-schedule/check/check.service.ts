@@ -32,17 +32,69 @@ const getElasticEndShift = (
   return startFirstShift + ONE_DAY_IN_SECONDS;
 };
 
-const checkEmployee = (
+//workDay is a set of shifts starting on the same day
+const convertShipToWorkDays = (workShiftsEmployer: WorkShiftNoEmployeeDto[]) =>
+  workShiftsEmployer.reduce((acc: Record<string, IWorkDaysEmployer>, cur) => {
+    const dateStartShift = new Date(cur.startWorkShift * 1000);
+    const dateStartWork: string = `${dateStartShift.getFullYear()} ${dateStartShift.getMonth()} ${dateStartShift.getDate()}`;
+    const isAccStartShiftEarlier =
+      acc[dateStartWork]?.startFirstShift &&
+      acc[dateStartWork]?.startFirstShift < cur.startWorkShift;
+    const isAccEndShiftElder =
+      acc[dateStartWork]?.endLastShift &&
+      acc[dateStartWork]?.endLastShift > cur.endWorkShift;
+
+    return {
+      ...acc,
+      [dateStartWork]: {
+        startFirstShift: isAccStartShiftEarlier
+          ? acc[dateStartWork]?.startFirstShift
+          : cur.startWorkShift,
+        endLastShift: isAccEndShiftElder
+          ? acc[dateStartWork]?.endLastShift
+          : cur.endWorkShift,
+      },
+    };
+  }, {});
+
+const checkBreaks = (
   employee: CreateEmployeeDto,
-  workSifts: WorkShiftNoEmployeeDto[],
+  workDaysEmployer: Record<string, IWorkDaysEmployer>,
 ) => {
-  const workSiftsEmployer = workSifts
+  const workDaysEmployerArray = Object.values(workDaysEmployer);
+  return workDaysEmployerArray.map((workDayEmployer, i) => {
+    if (
+      (employee.typeWorkingHours === 'static' &&
+        workDayEmployer.startFirstShift + ONE_DAY_IN_SECONDS <
+          workDayEmployer.endLastShift + BREAK_IN_SECONDS) ||
+      getElasticEndShift(
+        workDayEmployer.startFirstShift,
+        workDaysEmployerArray[i + 1]?.startFirstShift,
+      ) <
+        workDayEmployer.endLastShift + BREAK_IN_SECONDS
+    ) {
+      return [generateError('Break to short', workDayEmployer, employee)];
+    }
+  });
+};
+
+const sortAndFilterShiftEmployee = (
+  employee: CreateEmployeeDto,
+  workShifts: WorkShiftNoEmployeeDto[],
+) =>
+  workShifts
     .filter(
       (workSift) => workSift.employeeIdentifier === employee.employeeIdentifier,
     )
     .sort((shiftA, shiftB) => shiftA.startWorkShift - shiftB.endWorkShift);
 
-  const errors = workSiftsEmployer.reduce((acc, cur, i) => {
+const checkEmployee = (
+  employee: CreateEmployeeDto,
+  workShifts: WorkShiftNoEmployeeDto[],
+) => {
+  const workShiftsEmployer = sortAndFilterShiftEmployee(employee, workShifts);
+
+  const errors = workShiftsEmployer.reduce((acc, cur, i) => {
     if (cur.startWorkShift > cur.endWorkShift) {
       return [
         ...acc,
@@ -57,7 +109,7 @@ const checkEmployee = (
       ];
     }
 
-    const nextShift = workSiftsEmployer[i + 1];
+    const nextShift = workShiftsEmployer[i + 1];
     if (nextShift && cur.endWorkShift > nextShift.startWorkShift) {
       return [
         ...acc,
@@ -74,63 +126,9 @@ const checkEmployee = (
     return acc;
   }, []);
 
-  const workDaysEmployer = workSiftsEmployer.reduce(
-    (acc: Record<string, IWorkDaysEmployer>, cur) => {
-      const dateStartShift = new Date(cur.startWorkShift * 1000);
-      const dateStartWork: string = `${dateStartShift.getFullYear()} ${dateStartShift.getMonth()} ${dateStartShift.getDate()}`;
-      const isAccStartShiftEarlier =
-        acc[dateStartWork]?.startFirstShift &&
-        acc[dateStartWork]?.startFirstShift < cur.startWorkShift;
-      const isAccEndShiftElder =
-        acc[dateStartWork]?.endLastShift &&
-        acc[dateStartWork]?.endLastShift > cur.endWorkShift;
+  const workDaysEmployer = convertShipToWorkDays(workShiftsEmployer);
 
-      return {
-        ...acc,
-        [dateStartWork]: {
-          startFirstShift: isAccStartShiftEarlier
-            ? acc[dateStartWork]?.startFirstShift
-            : cur.startWorkShift,
-          endLastShift: isAccEndShiftElder
-            ? acc[dateStartWork]?.endLastShift
-            : cur.endWorkShift,
-        },
-      };
-    },
-    {},
-  );
-
-  const workDaysEmployerArray = Object.values(workDaysEmployer);
-  if (employee.typeWorkingHours === 'static') {
-    return workDaysEmployerArray.map((workDayEmployer) => {
-      if (
-        workDayEmployer.startFirstShift + ONE_DAY_IN_SECONDS <
-        workDayEmployer.endLastShift + BREAK_IN_SECONDS
-      ) {
-        return [
-          ...errors,
-          generateError('Break to short', workDayEmployer, employee),
-        ];
-      }
-      return [...errors];
-    });
-  } else {
-    return workDaysEmployerArray.map((workDayEmployer, i) => {
-      if (
-        getElasticEndShift(
-          workDayEmployer.startFirstShift,
-          workDaysEmployerArray[i + 1]?.startFirstShift,
-        ) <
-        workDayEmployer.endLastShift + BREAK_IN_SECONDS
-      ) {
-        return [
-          ...errors,
-          generateError('Break to short', workDayEmployer, employee),
-        ];
-      }
-      return [...errors];
-    });
-  }
+  return [...errors, checkBreaks(employee, workDaysEmployer)];
 };
 
 @Injectable()
@@ -140,7 +138,7 @@ export class CheckService {
 
     const errors = employees
       .map((employee) => checkEmployee(employee, workShifts))
-      .flat(2)
+      .flat(3)
       .filter((data) => data);
     return errors.length > 0 ? errors : 'Work Schedule is correct';
   }
