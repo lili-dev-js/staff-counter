@@ -10,7 +10,7 @@ export class FindAllService {
     private readonly workScheduleRepository: Repository<WorkSchedule>,
   ) {}
 
-  findAll(limit = 50, offset = 0) {
+  findAll(limit = 10, offset = 0) {
     return this.workScheduleRepository.find({
       relations: ['errors.employee', 'workShifts.employee'],
       take: limit,

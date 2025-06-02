@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CheckService } from './check.service';
 import { CreateCheckDto } from './dto/create-check.dto';
 import { WorkScheduleService } from '../work-schedule.service';
@@ -28,7 +28,7 @@ export class CheckController {
   }
 
   @Get()
-  findAll() {
-    return this.findAllService.findAll();
+  findAll(@Query('limit') limit?: number, @Query('offset') offset?: number) {
+    return this.findAllService.findAll(limit,offset);
   }
 }
