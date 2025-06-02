@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkShift } from './entities/work-shift.entity';
 import { Employee } from './employee/entities/employee.entity';
 import { EmployeeController } from './employee/employee.controller';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkShift, Employee])],
+  imports: [TypeOrmModule.forFeature([WorkShift, Employee]),EmployeeModule],
   controllers: [WorkShiftController, EmployeeController],
   providers: [WorkShiftService],
 })

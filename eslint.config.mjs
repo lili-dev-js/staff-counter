@@ -26,6 +26,16 @@ export default tseslint.config(
     },
   },
   {
+    overrides: [
+      {
+        files: ['test/**'],
+        plugins: ['jest'],
+        rules: {
+          '@typescript-eslint/unbound-method': 'off',
+          'jest/unbound-method': 'error',
+        },
+      },
+    ],
     plugins: {
       'check-file': checkFile,
     },

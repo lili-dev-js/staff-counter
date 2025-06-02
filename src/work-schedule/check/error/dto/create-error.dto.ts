@@ -16,7 +16,9 @@ export class CreateErrorDto {
   error: string;
 
   @IsNotEmpty()
-  employee: CreateEmployeeDto;
+  employee: {
+    id: number;
+  };
 
   @IsNotEmpty()
   workSchedule: {

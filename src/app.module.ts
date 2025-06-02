@@ -10,7 +10,7 @@ import { IsUniqueVariableInObjectsArray } from './validators/is-unique-variable-
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: 'db',
       port: 5432,
       username: 'admin1',
       password: 'Zupka765',
