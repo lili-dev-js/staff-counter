@@ -66,7 +66,6 @@ const checkEmployee = (
   );
 
   const workDaysEmployerArray = Object.values(workDaysEmployer);
-  console.log(workDaysEmployerArray)
   if (employee.typeWorkingHours === 'static') {
     return workDaysEmployerArray.map((workDayEmployer) => {
       if (
@@ -100,7 +99,6 @@ export class CheckService {
       .map((employee) => checkEmployee(employee, workShifts))
       .flat(2)
       .filter((data) => data);
-    console.log(errors)
     return errors.length > 0 ? errors : 'Work Schedule is correct';
   }
 }
