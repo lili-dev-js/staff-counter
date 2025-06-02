@@ -38,7 +38,6 @@ describe('WorkScheduleService', () => {
       endWorkShift: 1748944872,
       employeeIdentifier: 'z221',
     },
-
   ];
 
   const createdEmployees = [
@@ -116,14 +115,22 @@ describe('WorkScheduleService', () => {
         employees: employeesDto,
         workShifts: workShiftsDto,
       });
-
+      const expectedCalls = workShiftsDto.map(
+        ({ startWorkShift, endWorkShift, employeeIdentifier }) => ({
+          startWorkShift,
+          endWorkShift,
+          employee: {
+            id: 1, //check past
+          },
+        }),
+      );
       expect(mockEmployeeRepository.save).toHaveBeenCalledWith(employeesDto);
       expect(mockWorkShiftRepository.create).toHaveBeenCalledTimes(
         workShiftsDto.length,
       );
 
       expect(mockWorkScheduleRepository.create).toHaveBeenCalledWith({
-        workShifts: createdWorkShifts,
+        workShifts: expectedCalls,
       });
 
       expect(mockWorkScheduleRepository.save).toHaveBeenCalledWith(
