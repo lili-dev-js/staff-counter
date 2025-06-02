@@ -36,9 +36,44 @@ const checkEmployee = (
   employee: CreateEmployeeDto,
   workSifts: WorkShiftNoEmployeeDto[],
 ) => {
-  const workSiftsEmployer = workSifts.filter(
-    (workSift) => workSift.employeeIdentifier === employee.employeeIdentifier,
-  );
+  const workSiftsEmployer = workSifts
+    .filter(
+      (workSift) => workSift.employeeIdentifier === employee.employeeIdentifier,
+    )
+    .sort((shiftA, shiftB) => shiftA.startWorkShift - shiftB.endWorkShift);
+
+  const errors = workSiftsEmployer.reduce((acc, cur, i) => {
+    if (cur.startWorkShift > cur.endWorkShift) {
+      return [
+        ...acc,
+        generateError(
+          'The shift ends before it starts',
+          {
+            startFirstShift: cur.startWorkShift,
+            endLastShift: cur.endWorkShift,
+          },
+          employee,
+        ),
+      ];
+    }
+
+    const nextShift = workSiftsEmployer[i + 1];
+    if (nextShift && cur.endWorkShift > nextShift.startWorkShift) {
+      return [
+        ...acc,
+        generateError(
+          'Several shift are ongoing at the same time',
+          {
+            startFirstShift: cur.startWorkShift,
+            endLastShift: cur.endWorkShift,
+          },
+          employee,
+        ),
+      ];
+    }
+    return acc;
+  }, []);
+
   const workDaysEmployer = workSiftsEmployer.reduce(
     (acc: Record<string, IWorkDaysEmployer>, cur) => {
       const dateStartShift = new Date(cur.startWorkShift * 1000);
@@ -72,8 +107,12 @@ const checkEmployee = (
         workDayEmployer.startFirstShift + ONE_DAY_IN_SECONDS <
         workDayEmployer.endLastShift + BREAK_IN_SECONDS
       ) {
-        return generateError('Break to short', workDayEmployer, employee);
+        return [
+          ...errors,
+          generateError('Break to short', workDayEmployer, employee),
+        ];
       }
+      return [...errors];
     });
   } else {
     return workDaysEmployerArray.map((workDayEmployer, i) => {
@@ -84,8 +123,12 @@ const checkEmployee = (
         ) <
         workDayEmployer.endLastShift + BREAK_IN_SECONDS
       ) {
-        return generateError('Break to short', workDayEmployer, employee);
+        return [
+          ...errors,
+          generateError('Break to short', workDayEmployer, employee),
+        ];
       }
+      return [...errors];
     });
   }
 };
