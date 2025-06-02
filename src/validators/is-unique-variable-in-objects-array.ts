@@ -16,8 +16,8 @@ export class IsUniqueVariableInObjectsArray
 {
   validate<T>(data: T[], args: TCustomValidationArguments<T>): boolean {
     return (
-      [...new Set(data.map((item) => item[args.constraints[0]]))].length ===
-      data.length
+      [...new Set(data?.map((item) => item[args.constraints[0]]))].length ===
+      data?.length
     );
   }
 

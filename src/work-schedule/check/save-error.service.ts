@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Error } from './error/entities/error.entity';
-import { ErrorService } from './error/error.service';
 import { TCheckEmployeeResponse } from './check';
 import { IWorkScheduleService } from '../work-schedule';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SaveErrorService {
   constructor(
     @InjectRepository(Error)
-    private readonly errorService: ErrorService,
+    private readonly errorRepository: Repository<Error>,
   ) {}
 
   async saveError(
@@ -17,7 +17,6 @@ export class SaveErrorService {
     workScheduleCheck: TCheckEmployeeResponse,
   ) {
     const { employees } = workScheduleResponse;
-
     if (typeof workScheduleCheck !== 'string') {
       const createErrorDto = workScheduleCheck
         .map((error) => {
@@ -33,12 +32,14 @@ export class SaveErrorService {
             startFirstShift: error?.startFirstShift || 0,
             endLastShift: error?.endLastShift || 0,
             error: error?.error || '',
-            workSchedule: workScheduleResponse,
+            workSchedule: {
+              id: workScheduleResponse.id,
+            },
             employee,
           };
         })
         .filter((data) => typeof data !== 'undefined');
-      await this.errorService.create(createErrorDto);
+      return this.errorRepository.save(createErrorDto);
     }
 
     return {

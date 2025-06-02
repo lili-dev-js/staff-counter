@@ -48,7 +48,7 @@ const checkEmployee = (
         acc[dateStartWork]?.startFirstShift < cur.startWorkShift;
       const isAccEndShiftElder =
         acc[dateStartWork]?.endLastShift &&
-        acc[dateStartWork]?.endLastShift > cur.startWorkShift;
+        acc[dateStartWork]?.endLastShift > cur.endWorkShift;
 
       return {
         ...acc,
@@ -58,7 +58,7 @@ const checkEmployee = (
             : cur.startWorkShift,
           endLastShift: isAccEndShiftElder
             ? acc[dateStartWork]?.endLastShift
-            : cur.startWorkShift,
+            : cur.endWorkShift,
         },
       };
     },
@@ -66,7 +66,7 @@ const checkEmployee = (
   );
 
   const workDaysEmployerArray = Object.values(workDaysEmployer);
-
+  console.log(workDaysEmployerArray)
   if (employee.typeWorkingHours === 'static') {
     return workDaysEmployerArray.map((workDayEmployer) => {
       if (
@@ -100,6 +100,7 @@ export class CheckService {
       .map((employee) => checkEmployee(employee, workShifts))
       .flat(2)
       .filter((data) => data);
+    console.log(errors)
     return errors.length > 0 ? errors : 'Work Schedule is correct';
   }
 }
