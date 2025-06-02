@@ -1,5 +1,5 @@
 import { Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { WorkShift } from '../../work-shift/entities/work-shift.entity';
+import { WorkShift } from '../work-shift/entities/work-shift.entity';
 import { Error } from '../check/error/entities/error.entity';
 
 @Entity()

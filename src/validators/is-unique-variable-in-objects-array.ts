@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 
-type CustomValidationArguments<T> = ValidationArguments & {
+type TCustomValidationArguments<T> = ValidationArguments & {
   constraints: Record<0, keyof T>;
 };
 
@@ -14,14 +14,14 @@ type CustomValidationArguments<T> = ValidationArguments & {
 export class IsUniqueVariableInObjectsArray
   implements ValidatorConstraintInterface
 {
-  validate<T>(data: T[], args: CustomValidationArguments<T>): boolean {
+  validate<T>(data: T[], args: TCustomValidationArguments<T>): boolean {
     return (
       [...new Set(data.map((item) => item[args.constraints[0]]))].length ===
       data.length
     );
   }
 
-  defaultMessage<T>(args: CustomValidationArguments<T>): string {
+  defaultMessage<T>(args: TCustomValidationArguments<T>): string {
     return `Values '${args.constraints[0].toString()}' are not unique`;
   }
 }

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWorkScheduleDto } from './dto/create-work-schedule.dto';
-import { UpdateWorkScheduleDto } from './dto/update-work-schedule.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WorkShift } from '../work-shift/entities/work-shift.entity';
+import { WorkShift } from './work-shift/entities/work-shift.entity';
 import { Repository } from 'typeorm';
-import { Employee } from '../employee/entities/employee.entity';
+import { Employee } from './work-shift/employee/entities/employee.entity';
 import { WorkSchedule } from './entities/work-schedule.entity';
-import { v4 as uuidv4 } from 'uuid';
+import { IWorkScheduleService } from './work-schedule';
 
 @Injectable()
 export class WorkScheduleService {
@@ -19,9 +18,10 @@ export class WorkScheduleService {
     private readonly employeeRepository: Repository<Employee>,
   ) {}
 
-  async create(createWorkScheduleDto: CreateWorkScheduleDto) {
+  async create(
+    createWorkScheduleDto: CreateWorkScheduleDto,
+  ): Promise<IWorkScheduleService> {
     const { workShifts, employees } = createWorkScheduleDto;
-    const checkScheduleId = uuidv4();
 
     const createdEmployees = await this.employeeRepository.save(
       employees.map((employee) => ({
@@ -32,15 +32,15 @@ export class WorkScheduleService {
     const workSchedule = this.workScheduleRepository.create({
       workShifts: workShifts
         .map((createWorkShiftDto) => {
-          const { start_work_shift, end_work_shift } = createWorkShiftDto;
+          const { startWorkShift, endWorkShift } = createWorkShiftDto;
           const employeeId = createdEmployees.find(
             (employee) =>
-              employee.employee_id_number === employee.employee_id_number,
+              employee.employeeIdentifier === employee.employeeIdentifier,
           )?.id;
           if (employeeId) {
             return this.workShiftRepository.create({
-              start_work_shift,
-              end_work_shift,
+              startWorkShift: startWorkShift,
+              endWorkShift: endWorkShift,
               employee: {
                 id: employeeId,
               },
@@ -50,7 +50,6 @@ export class WorkScheduleService {
         })
         .filter((data) => typeof data !== 'undefined'),
     });
-
     return {
       ...(await this.workScheduleRepository.save(workSchedule)),
       employees: createdEmployees,
@@ -59,17 +58,5 @@ export class WorkScheduleService {
 
   findAll() {
     return `This action returns all workSchedule`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} workSchedule`;
-  }
-
-  update(id: number, updateWorkScheduleDto: UpdateWorkScheduleDto) {
-    return `This action updates a #${id} workSchedule`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} workSchedule`;
   }
 }

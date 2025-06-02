@@ -2,12 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmployeeModule } from './employee/employee.module';
-import { Employee } from './employee/entities/employee.entity';
+import { Employee } from './work-schedule/work-shift/employee/entities/employee.entity';
 import { WorkScheduleModule } from './work-schedule/work-schedule.module';
-import { WorkShiftModule } from './work-shift/work-shift.module';
-import { IsUniqueVariableInObjectsArray } from './validators/isUniqueVariableInObjectsArray';
-import { CheckModule } from './work-schedule/check/check.module';
+import { IsUniqueVariableInObjectsArray } from './validators/is-unique-variable-in-objects-array';
 
 @Module({
   imports: [
@@ -22,9 +19,7 @@ import { CheckModule } from './work-schedule/check/check.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    EmployeeModule,
     WorkScheduleModule,
-    WorkShiftModule,
   ],
   controllers: [AppController],
   providers: [AppService, IsUniqueVariableInObjectsArray],

@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Employee } from '../../../../employee/entities/employee.entity';
+import { Employee } from '../../../work-shift/employee/entities/employee.entity';
 import { WorkSchedule } from '../../../entities/work-schedule.entity';
 
 @Entity()
@@ -14,10 +14,10 @@ export class Error {
   id: number;
 
   @Column({ type: 'int' })
-  start_first_shift: number;
+  startFirstShift: number;
 
   @Column({ type: 'int' })
-  end_last_shift: number;
+  endLastShift: number;
 
   @Column({ type: 'varchar' })
   error: string;

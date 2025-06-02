@@ -1,17 +1,16 @@
 import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
-import { CreateEmployeeDto } from '../../../../employee/dto/create-employee.dto';
-import { WorkSchedule } from '../../../entities/work-schedule.entity';
+import { CreateEmployeeDto } from '../../../work-shift/employee/dto/create-employee.dto';
 
 export class CreateErrorDto {
   @IsInt()
   @IsNotEmpty()
   @Min(0)
-  start_first_shift: number;
+  startFirstShift: number;
 
   @IsInt()
   @IsNotEmpty()
   @Min(0)
-  end_last_shift: number;
+  endLastShift: number;
 
   @IsString()
   error: string;
@@ -20,5 +19,7 @@ export class CreateErrorDto {
   employee: CreateEmployeeDto;
 
   @IsNotEmpty()
-  work_schedule: WorkSchedule;
+  workSchedule: {
+    id: number;
+  };
 }

@@ -1,11 +1,5 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { WorkShift } from '../../work-shift/entities/work-shift.entity';
-
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { WorkShift } from '../../entities/work-shift.entity';
 
 @Entity()
 export class Employee {
@@ -13,7 +7,7 @@ export class Employee {
   id: number;
 
   @Column({ type: 'varchar', length: 30 })
-  employee_id_number: string;
+  employeeIdentifier: string;
 
   @Column({ type: 'varchar', length: 30 })
   name: string;
@@ -22,7 +16,7 @@ export class Employee {
   surname: string;
 
   @Column({ type: 'enum', enum: ['elastic', 'static'] })
-  type_working_hours: string;
+  typeWorkingHours: string;
 
   @OneToMany(() => WorkShift, (workShift) => workShift.employee)
   workShifts: WorkShift[];

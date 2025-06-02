@@ -14,12 +14,4 @@ export class ErrorService {
   create(createErrorDto: CreateErrorDto[]) {
     return this.errorRepository.save(createErrorDto);
   }
-
-  findAll() {
-    return `This action returns all error`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} error`;
-  }
 }
